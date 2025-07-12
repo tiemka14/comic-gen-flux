@@ -1,0 +1,12 @@
+{
+    "id": "k4d79o4sg5",
+    "name": "comic-gen-template",
+    "imageName": "runpod/pytorch:2.1.0-py3.10-cuda11.8.0-devel-ubuntu22.04",
+    "dockerArgs": "",
+    "containerDiskInGb": 100,
+    "volumeInGb": 100,
+    "volumeMountPath": "/workspace",
+    "ports": "8888/http,666/tcp",
+    "env": [],
+    "isServerless": false
+}
