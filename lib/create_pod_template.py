@@ -7,9 +7,10 @@ from pathlib import Path
 
 load_dotenv()
 
-    
+
 API_KEY = os.getenv("RUNPOD_API_KEY")
 runpod.api_key = API_KEY
+
 
 def list_pod_templates():
     """
@@ -18,7 +19,7 @@ def list_pod_templates():
     headers = {"Authorization": f"Bearer {API_KEY}"}
 
     query = {
-      "query": """
+        "query": """
         query getPodTemplates {
           myself {
             podTemplates {
@@ -39,9 +40,10 @@ def list_pod_templates():
 
     resp = requests.post("https://api.runpod.io/graphql", json=query, headers=headers)
     templates = resp.json()["data"]["myself"]["podTemplates"]
-    #for t in templates:
+    # for t in templates:
     #    print(f"{t['id']:12} | {t['name']:<20} | {t['imageName']} | GPUs: {t['category']}")
     return templates
+
 
 def delete_pod_template(template_id):
     """
@@ -49,15 +51,23 @@ def delete_pod_template(template_id):
     """
     resp = requests.delete(
         f"https://rest.runpod.io/v1/templates/{template_id}",
-        headers={"Authorization": f"Bearer {API_KEY}"}
+        headers={"Authorization": f"Bearer {API_KEY}"},
     )
 
     if resp.status_code == 204:
         print("Template deleted successfully ✅")
     else:
-        print("Error deleting template:", resp.status_code, resp.text)    
+        print("Error deleting template:", resp.status_code, resp.text)
 
-def create_pod_template(min_gb=24, name="comic-gen-template", image_name="runpod/pytorch:2.1.0-py3.10-cuda11.8.0-devel-ubuntu22.04", container_disk_in_gb=100, volume_in_gb=100, volume_mount_path="/workspace"):
+
+def create_pod_template(
+    min_gb=24,
+    name="comic-gen-template",
+    image_name="runpod/pytorch:2.1.0-py3.10-cuda11.8.0-devel-ubuntu22.04",
+    container_disk_in_gb=10,
+    volume_in_gb=10,
+    volume_mount_path="/workspace",
+):
     """
     Create a RunPod template for the comic generation task.
     """
@@ -74,7 +84,7 @@ def create_pod_template(min_gb=24, name="comic-gen-template", image_name="runpod
         container_disk_in_gb=container_disk_in_gb,
         volume_in_gb=volume_in_gb,
         volume_mount_path=volume_mount_path,
-        ports="8888/http,666/tcp",   
+        ports="8888/http,666/tcp",
     )
     print(f"Template created: {tmpl['id']}")
     print(json.dumps(tmpl, indent=2))
@@ -86,13 +96,14 @@ def create_pod_template(min_gb=24, name="comic-gen-template", image_name="runpod
     print(f"Template saved to {template_dir / f'{name}.json'}")
     return tmpl
 
+
 if __name__ == "__main__":
     # Example usage
     templates = list_pod_templates()
     if not templates:
         print("No pod templates found.")
-    
+
     # Create a new template
     template_id = create_pod_template()
     print(template_id)
-    delete_pod_template('3ecpsq3nw3')
+    delete_pod_template("3ecpsq3nw3")

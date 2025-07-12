@@ -6,11 +6,14 @@ It uses the PIL library for image processing and loguru for logging.
 from loguru import logger
 
 from lib.preprocess_img import batch_preprocess_images
-from lib.create_pod_template import create_pod_template, delete_pod_template
+from lib.create_pod_template import create_pod_template
+from lib.deploy_pod import deploy_pod
 import argparse
 import os
 from pathlib import Path
 import time
+import json
+import runpod
 
 log_dir = Path("log")
 log_dir.mkdir(exist_ok=True)
@@ -85,4 +88,11 @@ if __name__ == "__main__":
         tmpl = create_pod_template()
         logger.info(f"Pod template created with ID: {tmpl['id']}")
     else:
-        logger.info("Pod templates found. Using existing pod template.")    
+        logger.info("Pod templates found. Using existing pod template.")
+        tmpl_files = list(pod_template_dir.glob("*.json"))
+        tmpl = json.loads(tmpl_files[0].read_text())
+    logger.info(f"Using pod template ID: {tmpl['id']}")
+    pod = deploy_pod(template_id=tmpl["id"], image_name=tmpl["imageName"])
+    logger.info(f"Pod deployed with ID: {pod['id']} and status: {pod['desiredStatus']}")
+    runpod.terminate_pod(pod["id"])
+    logger.info(f"Pod with ID: {pod['id']} terminated successfully.")
