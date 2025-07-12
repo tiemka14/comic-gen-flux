@@ -32,4 +32,6 @@
 *.exr
 *.jxr
 */__pycache__/
+
 *.log
+.env

@@ -1,4 +1,5 @@
 [tool.poetry]
+package-mode = false
 name = "comic-gen-flux"
 version = "0.1.0"
 description = ""
@@ -12,6 +13,8 @@ loguru = "^0.7.3"
 ruff = "^0.12.3"
 black = "^25.1.0"
 rich = "^14.0.0"
+python-dotenv = "^1.1.1"
+runpod = "^1.7.12"
 
 
 [build-system]
